@@ -1,0 +1,69 @@
+---
+alwaysApply: true
+---
+
+# ⚙️ Cursor Coding Rules — Nishant
+
+## 🧩 Component Structure Rules
+- Always create **new components** as `React.memo` components.
+- Every component must be **functional** (no class components).
+- Organize components in separate folders if reusable.
+- Do **code-splitting** where possible.
+- Keep components **small and modular** — follow single-responsibility principle.
+
+## 🎨 Styling Rules
+- Use **NativeWind** for styling.
+- Prefer `className` with Tailwind utility classes instead of inline styles.
+- Keep reusable style sets in `styles.ts` or `useStyle` hook if needed.
+- ✅ If a **Tamagui** component exists for the UI element, **use it directly** instead of creating a new one.
+  - Check first if the component or layout already exists in **Tamagui** before writing a custom one.
+  - Combine **Tamagui** components with **NativeWind** styling when required for hybrid consistency.
+  - Example: prefer `<Button />`, `<Stack />`, `<YStack />`, `<XStack />`, `<Text />`, `<Input />` from Tamagui before creating custom alternatives.
+
+---
+
+## 🎨 Tamagui Design Consistency Rules
+When using Tamagui components, follow these conventions for consistent design and theming:
+
+- Always import UI primitives from **`tamagui`** (e.g., `import { Stack, Text, Button, Input } from 'tamagui'`).
+- Respect the design tokens defined in your `tamagui.config.ts`:
+  - **Spacing:** use tokens like `$0`, `$1`, `$2`, `$3`, `$4`, etc.  
+    e.g. `padding="$4"`, `gap="$3"`, `marginVertical="$2"`.
+  - **Colors:** use token references like `$background`, `$color`, `$accent`, `$gray5`, etc.  
+    e.g. `backgroundColor="$background"`, `color="$color"`.
+  - **Typography:** always use Tamagui’s font tokens and sizes:  
+    `fontFamily="$body"`, `fontSize="$4"`, `fontWeight="600"`.
+  - **Variants:** use built-in variants (e.g. `Button` variants: `variant="outlined" | "solid" | "ghost"`).  
+    Prefer extending Tamagui’s variants over custom inline styles.
+  - **Theming:** always wrap the app in `TamaguiProvider` and ensure theme-based props (like `theme="dark"`) are respected.
+- Avoid raw color codes or pixel values — always use tokens from your config.
+- If adding a new custom component, first check if it can be composed from existing Tamagui primitives.
+
+---
+
+## ⚡ Performance Rules
+- Wrap all **functions** with `useCallback` based on dependency requirements.
+- Use **useMemo** for computed values, arrays, or objects to avoid re-renders.
+- Avoid anonymous inline functions inside JSX.
+- Use **FlatList / SectionList** with proper `keyExtractor`, `memo`, and `renderItem` optimizations.
+- Use **lazy loading** and **dynamic imports** for non-critical components.
+
+---
+
+## ♻️ Reusability Rules
+- Extract common UI into shared components (e.g., `Button`, `Card`, `Header`, `Input`).
+- Use hooks for logic reuse (`useAuth`, `useFetch`, `useTheme`, etc.).
+- Keep utilities and constants in `utils/` and `constants/` directories.
+- Use `types.ts` for all TypeScript types/interfaces.
+
+---
+
+## 🧠 Code Quality Rules
+- Follow **consistent naming**: 
+  - Components → `PascalCase`
+  - Hooks/Functions → `camelCase`
+  - Constants → `UPPER_CASE`
+- Keep prop types minimal and well-defined.
+- Remove all unused imports, variables, and console logs before commit.
+- Use descriptive filenames and avoid redundant suffixes (e.g., not `ButtonComponent.tsx`, just `Button.tsx`).
+

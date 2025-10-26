@@ -15,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.industryreadyexpoapp"
+      "bundleIdentifier": "com.shaklan.clara",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +27,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.yourcompany.industryreadyexpoapp"
+      "package": "com.shaklan.clara"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -33,10 +36,23 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      [
+        "react-native-auth0",
+        {
+          "domain": "dev-gxp7532f5e60qup8.uk.auth0.com",
+          "clientId": "gEssI9303S4zyeAEqezKJPdfocgGLJsw"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4f6b9366-e011-41a5-8d86-79b4df6e43d4"
+      }
     }
   }
 }

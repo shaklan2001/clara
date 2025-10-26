@@ -1,68 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import AnimatedButton from '../../components/UI/AnimatedButton';
-import BouncingBall from '../../components/UI/BouncingBall';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
-export default function HomeScreen() {
-  const [isBallAnimating, setIsBallAnimating] = useState(false);
-
-  const handleBounceBall = () => {
-    setIsBallAnimating(true);
-  };
-
-  const handleAnimationComplete = () => {
-    setIsBallAnimating(false);
-  };
+export default function HomeScreen(): React.JSX.Element {
+  const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Industry Ready Expo App Setup</Text>
-      <Text style={styles.subtitle}>
-        This app includes TypeScript, ESLint, Prettier, and React Native
-        Reanimated
-      </Text>
-      
-      <BouncingBall 
-        isAnimating={isBallAnimating} 
-        onAnimationComplete={handleAnimationComplete}
-      />
-      
-      <View style={styles.buttonContainer}>
-        <AnimatedButton 
-          title="Bounce the Ball!" 
-          onPress={handleBounceBall}
-          disabled={isBallAnimating}
-        />
+    <View className="flex-1 justify-center items-center bg-white px-6 py-10">
+      <View className="items-center mb-5">
+        <Text className="text-3xl font-bold text-[#0f172a] mb-2 text-center">
+          Welcome to Clara
+        </Text>
+        <TouchableOpacity
+          className="bg-[#155dfc] px-4 py-2 rounded-lg"
+          onPress={() => router.push('/profile')}
+        >
+          <Text className="text-white text-sm font-semibold">View Profile</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000000',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 32,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#cccccc',
-    textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
-  },
-  buttonContainer: {
-    gap: 16,
-    alignItems: 'center',
-  },
-});

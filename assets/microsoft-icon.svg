@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="LoginScreen" clip-path="url(#clip0_5_62)">
+<path id="Vector" d="M7.59791 15.9956H-1.11771e-07V5.73176H7.59791V15.9956Z" fill="var(--fill-0, #F25022)"/>
+<path id="Vector_2" d="M15.9956 15.9956H8.39769V5.73176H15.9956V15.9956Z" fill="var(--fill-0, #00A4EF)"/>
+<path id="Vector_3" d="M7.59791 4.93198H-1.11771e-07V-5.33187H7.59791V4.93198Z" fill="var(--fill-0, #7FBA00)"/>
+<path id="Vector_4" d="M15.9956 4.93198H8.39769V-5.33187H15.9956V4.93198Z" fill="var(--fill-0, #FFB900)"/>
+</g>
+<defs>
+<clipPath id="clip0_5_62">
+<rect width="15.9956" height="15.9956" fill="white"/>
+</clipPath>
+</defs>
+</svg>
