@@ -1297,6 +1297,13 @@
   resolved "https://registry.npmjs.org/@expo/sudo-prompt/-/sudo-prompt-9.3.2.tgz"
   integrity sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw==
 
+"@expo/ui@~0.2.0-beta.7":
+  version "0.2.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@expo/ui/-/ui-0.2.0-beta.7.tgz#3c424cdd7e2602da849492373bff12e32507b1b9"
+  integrity sha512-oz2HEpwll+yMFUKbryZ84IgxjLx7RPxxMDVKpCEsK0OhETrLF5NxHlpCkKjdLuQL3QiVSvj5kn6hBFknco3aCw==
+  dependencies:
+    sf-symbols-typescript "^2.1.0"
+
 "@expo/vector-icons@^15.0.2", "@expo/vector-icons@^15.0.3":
   version "15.0.3"
   resolved "https://registry.npmjs.org/@expo/vector-icons/-/vector-icons-15.0.3.tgz"
@@ -6419,6 +6426,11 @@ expo-linking@~8.0.8:
   dependencies:
     expo-constants "~18.0.8"
     invariant "^2.2.4"
+
+expo-liquid-glass-view@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/expo-liquid-glass-view/-/expo-liquid-glass-view-0.1.9.tgz#fb9c8e1a57ddbc14ac76f7736cfbb97cbf91097a"
+  integrity sha512-Ed6qwyRbhoyAQtnLCdMxh6/iGwc3UTPhnzSjnPaI83EA1YnY1quqbv5QA+5OZV8zOZtnz3cd377RoY979z0fQg==
 
 expo-manifests@~1.0.8:
   version "1.0.8"

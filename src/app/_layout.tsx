@@ -4,21 +4,18 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
 import { AuthProvider } from '../contexts/AuthContext';
 import '../../global.css';
 import tamaguiConfig from '../../tamagui.config';
 import { TamaguiProvider } from 'tamagui';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = 'light';
 
   return (
-    <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme}>
       <AuthProvider>
-        <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
+        <ThemeProvider value={DefaultTheme}>
           <RootLayoutNav />
         </ThemeProvider>
       </AuthProvider>
