@@ -1,166 +1,162 @@
 import React, { memo, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import { Entypo } from '@expo/vector-icons';
+
+type VisitType = 'video' | 'inPerson';
+type StatusVariant = 'confirmed' | 'completed';
 
 interface AppointmentCardProps {
   doctorName: string;
   specialty: string;
-  date: string;
-  location: string;
-  isConfirmed?: boolean;
+  dateTime?: string;
+  locationLabel?: string;
+  visitType?: VisitType;
+  statusLabel?: StatusVariant;
   doctorImage?: any;
-}
-
-interface DoctorInfoSectionProps {
-  doctorName: string;
-  specialty: string;
-  isConfirmed: boolean;
-  doctorImage?: any;
-}
-
-interface AppointmentDetailsSectionProps {
-  date: string;
-  location: string;
-}
-
-interface ActionButtonsSectionProps {
   onAddToCalendar?: () => void;
-  onViewDetails?: () => void;
+  addToCalendarLabel?: string;
+  onPrimaryAction?: () => void;
+  primaryActionLabel?: string;
+  showActions?: boolean;
+  // backwards compatibility props
+  date?: string;
+  location?: string;
+  isConfirmed?: boolean;
 }
 
+const STATUS_THEME: Record<StatusVariant, { background: string; text: string; label: string }> = {
+  confirmed: {
+    background: '#DCFCE7',
+    text: '#047857',
+    label: 'confirmed',
+  },
+  completed: {
+    background: '#E2E8F0',
+    text: '#475569',
+    label: 'completed',
+  },
+};
 
-const DoctorInfoSection = memo(({
-  doctorName,
-  specialty,
-  isConfirmed,
-  doctorImage,
-}: DoctorInfoSectionProps) => {
-  return (
-    <View style={styles.doctorInfoContainer}>
-      <View className="flex-row items-center" style={styles.doctorInfoRow}>
-        <View className="w-12 h-12 rounded-full overflow-hidden bg-white" style={[styles.avatarContainer, styles.avatarShadow]}>
-          <Image
-            source={doctorImage || require('../../../assets/images/user.png')}
-            style={styles.avatarImage}
-            resizeMode="cover"
-          />
-        </View>
-        
-        <View style={styles.doctorTextContainer}>
-          <Text className="text-[#0F172B]" style={styles.doctorName}>
-            {doctorName}
-          </Text>
-          <Text className="text-[#62748E]" style={styles.specialty}>
-            {specialty}
-          </Text>
-        </View>
-        
-        {isConfirmed && (
-          <View style={styles.confirmedBadge}>
-            <Text className="text-[#007A55]" style={styles.confirmedText}>
-              Confirmed
-            </Text>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-});
-
-DoctorInfoSection.displayName = 'DoctorInfoSection';
-
-const AppointmentDetailsSection = memo(({
-  date,
-  location,
-}: AppointmentDetailsSectionProps) => {
-  return (
-    <View style={styles.detailsContainer}>
-      <View className="flex-row items-center" style={styles.detailRow}>
-        <MaterialCommunityIcons name="clock-time-three-outline" size={20} color="#90A1B9" />
-        <Text className="text-[#314158]" style={styles.detailText}>
-          {date}
-        </Text>
-      </View>
-      <View className="flex-row items-center" style={styles.detailRow}>
-        <SimpleLineIcons name="location-pin" size={20} color="#90A1B9" />
-        <Text className="text-[#314158]" style={styles.detailText}>
-          {location}
-        </Text>
-      </View>
-    </View>
-  );
-});
-
-AppointmentDetailsSection.displayName = 'AppointmentDetailsSection';
-
-const ActionButtonsSection = memo(({
-  onAddToCalendar,
-  onViewDetails,
-}: ActionButtonsSectionProps) => {
-  const handleAddToCalendar = useCallback(() => {
-    onAddToCalendar?.();
-  }, [onAddToCalendar]);
-
-  const handleViewDetails = useCallback(() => {
-    onViewDetails?.();
-  }, [onViewDetails]);
-
-  return (
-    <View style={styles.buttonsContainer}>
-      <TouchableOpacity
-        className="bg-white rounded-[8px]"
-        style={styles.addCalendarButton}
-        onPress={handleAddToCalendar}
-      >
-        <Entypo name="calendar" size={18} color="black" />
-        <Text className="text-[#0F172B]" style={styles.buttonText}>
-          Add to Calendar
-        </Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity
-        className="bg-[#155DFC] rounded-[8px]"
-        style={[styles.viewDetailsButton, styles.buttonShadow]}
-        onPress={handleViewDetails}
-      >
-        <Text className="text-white" style={styles.buttonText}>
-          View Details
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-});
-
-ActionButtonsSection.displayName = 'ActionButtonsSection';
+const VISIT_ICON: Record<VisitType, keyof typeof Ionicons.glyphMap> = {
+  video: 'videocam-outline',
+  inPerson: 'location-outline',
+};
 
 const AppointmentCard = memo(({
   doctorName,
   specialty,
+  dateTime,
+  locationLabel,
+  visitType,
+  statusLabel,
+  doctorImage,
+  onAddToCalendar,
+  addToCalendarLabel = 'Add to Calendar',
+  onPrimaryAction,
+  primaryActionLabel = 'Reschedule',
+  showActions = true,
   date,
   location,
-  isConfirmed = true,
-  doctorImage,
+  isConfirmed,
 }: AppointmentCardProps) => {
+  let resolvedStatus: StatusVariant = 'confirmed';
+  if (statusLabel) {
+    resolvedStatus = statusLabel;
+  } else if (isConfirmed === false) {
+    resolvedStatus = 'completed';
+  }
+  const statusTheme = STATUS_THEME[resolvedStatus];
+
+  const resolvedDateTime = dateTime ?? date ?? '';
+  const resolvedLocation = locationLabel ?? location ?? '';
+  const resolvedVisitType: VisitType = visitType ?? 'inPerson';
+
+  const showAddToCalendar = Boolean(onAddToCalendar);
+  const showPrimaryAction = Boolean(onPrimaryAction);
+
+  const handleAddToCalendar = useCallback(() => {
+    onAddToCalendar?.();
+  }, [onAddToCalendar]);
+
+  const handlePrimaryAction = useCallback(() => {
+    onPrimaryAction?.();
+  }, [onPrimaryAction]);
+
   return (
-    <View 
-      className="bg-white rounded-[14px] border border-[#E2E8F0] p-4"
-      style={[styles.cardShadow, { borderWidth: 0.656, gap: 30 }]}
-    >
-      <DoctorInfoSection
-        doctorName={doctorName}
-        specialty={specialty}
-        isConfirmed={isConfirmed}
-        doctorImage={doctorImage}
-      />
+    <View className="bg-white" style={styles.cardContainer}>
+      <View className="flex-row justify-between items-start">
+        <View className="flex-row gap-3">
+          <View className="w-12 h-12 rounded-full overflow-hidden bg-[#F1F5F9]" style={styles.avatarShadow}>
+            <Image
+              source={doctorImage || require('../../../assets/images/user.png')}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          </View>
+          <View>
+            <Text className="text-[#0F172B]" style={styles.doctorName}>
+              {doctorName}
+            </Text>
+            <Text className="text-[#64748B]" style={styles.specialty}>
+              {specialty}
+            </Text>
+          </View>
+        </View>
 
-      <AppointmentDetailsSection
-        date={date}
-        location={location}
-      />
+        <View className="px-3 py-1 rounded-full" style={{ backgroundColor: statusTheme.background }}>
+          <Text style={[styles.statusText, { color: statusTheme.text }]}>
+            {statusTheme.label}
+          </Text>
+        </View>
+      </View>
 
-      <ActionButtonsSection />
+      <View className="mt-5 gap-3">
+        <View className="flex-row items-center gap-3">
+          <Ionicons name="time-outline" size={20} color="#64748B" />
+          <Text className="text-[#0F172B]" style={styles.detailText}>
+            {resolvedDateTime}
+          </Text>
+        </View>
+
+        <View className="flex-row items-center gap-3">
+          <Ionicons name={VISIT_ICON[resolvedVisitType]} size={20} color="#64748B" />
+          <Text className="text-[#0F172B]" style={styles.detailText}>
+            {resolvedLocation}
+          </Text>
+        </View>
+      </View>
+
+      {showActions && (showAddToCalendar || showPrimaryAction) ? (
+        <View className="mt-6 gap-3">
+          {showAddToCalendar ? (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              className="h-12 flex-row items-center justify-center gap-2"
+              onPress={handleAddToCalendar}
+              style={styles.outlineButton}
+            >
+              <MaterialCommunityIcons name="calendar-blank-outline" size={18} color="#0F172B" />
+              <Text className="text-[#0F172B]" style={styles.outlineButtonLabel}>
+                {addToCalendarLabel}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+
+          {showPrimaryAction ? (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              className="h-12 items-center justify-center"
+              style={styles.primaryButton}
+              onPress={handlePrimaryAction}
+            >
+              <Text className="text-white" style={styles.primaryButtonLabel}>
+                {primaryActionLabel}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 });
@@ -170,121 +166,69 @@ AppointmentCard.displayName = 'AppointmentCard';
 export default AppointmentCard;
 
 const styles = StyleSheet.create({
-  cardShadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 4,
+  cardContainer: {
+    borderRadius: 14,
+    borderWidth: 0.687,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    shadowColor: '#0F172B',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+    gap: 4,
   },
   avatarShadow: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 3,
     elevation: 2,
-  },
-  buttonShadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1.5,
-    elevation: 2,
-  },
-  doctorInfoContainer: {
-    height: 48,
-    width: '100%',
-  },
-  doctorInfoRow: {
-    position: 'relative',
-    width: '100%',
-  },
-  avatarContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 9999,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
   },
   avatarImage: {
     width: '100%',
     height: '100%',
   },
-  doctorTextContainer: {
-    marginLeft: 12,
-    gap: 1.998,
-    flex: 1,
-  },
-  confirmedBadge: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    backgroundColor: '#ECFDF5',
-    borderWidth: 0.656,
-    borderColor: '#5EE9B5',
-    borderRadius: 8,
-    paddingHorizontal: 8.656,
-    paddingVertical: 2.656,
-    height: 21.3,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  detailsContainer: {
-    gap: 7.991,
-    width: '100%',
-  },
-  detailRow: {
-    gap: 7.991,
-  },
-  buttonsContainer: {
-    gap: 7.991,
-    width: '100%',
-    paddingBottom: 0.656,
-  },
-  addCalendarButton: {
-    borderWidth: 0.656,
-    borderColor: '#0F172B',
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  viewDetailsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
   doctorName: {
-    fontSize: 16,
+    fontSize: 18,
     lineHeight: 24,
-    letterSpacing: -0.3125,
-    fontWeight: '400',
+    fontWeight: '600',
   },
   specialty: {
     fontSize: 14,
     lineHeight: 20,
-    letterSpacing: -0.1504,
-    fontWeight: '400',
-  },
-  confirmedText: {
-    fontSize: 12,
-    lineHeight: 16,
     fontWeight: '500',
+  },
+  statusText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
   detailText: {
-    fontSize: 14,
-    lineHeight: 20,
-    letterSpacing: -0.1504,
-    fontWeight: '400',
-  },
-  buttonText: {
-    fontSize: 14,
-    lineHeight: 20,
-    letterSpacing: -0.1504,
+    fontSize: 15,
+    lineHeight: 22,
     fontWeight: '500',
+  },
+  outlineButtonLabel: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+  outlineButton: {
+    borderWidth: 0.687,
+    borderColor: '#CBD5F5',
+    borderRadius: 8,
+  },
+  primaryButton: {
+    backgroundColor: '#155dfc',
+    borderRadius: 8,
+  },
+  primaryButtonLabel: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '600',
   },
 });
 

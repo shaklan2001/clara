@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'expo-router';
 import ChatCard from '../../components/home/ChatCard';
 import AppointmentCard from '../../components/home/AppointmentCard';
 import DocumentCard from '../../components/home/DocumentCard';
+import DocumentPreviewModal from '../../components/documents/DocumentPreviewModal';
 
 interface Chat {
   id: string;
@@ -35,6 +37,9 @@ interface Document {
   date: string;
   fileType: string;
   progress?: number;
+  category: string;
+  memberName: string;
+  description: string;
 }
 
 const RECENT_CHATS: Chat[] = [
@@ -66,26 +71,38 @@ const DOCUMENTS: Document[] = [
     id: '1',
     title: 'Blood Test Results - Annual Checkup',
     date: 'Today',
-    fileType: 'pdf',
+    fileType: 'PDF',
+    category: 'Laboratory',
+    memberName: 'Aarav Malhotra',
+    description: 'A comprehensive panel covering CBC, lipid profile, and metabolic markers for the latest wellness visit.',
   },
   {
     id: '2',
     title: 'Prescription - Antibiotics for Infection',
     date: 'Today',
-    fileType: 'web',
+    fileType: 'PDF',
+    category: 'Prescription',
+    memberName: 'Aarav Malhotra',
+    description: 'Physician-prescribed antibiotic course with dosage instructions and refill information.',
   },
   {
     id: '3',
     title: 'MRI Scan Report - Lower Back Pain',
     date: 'Today',
-    fileType: 'pdf',
+    fileType: 'PDF',
     progress: 10,
+    category: 'Imaging',
+    memberName: 'Aarav Malhotra',
+    description: 'Preliminary MRI scan findings for lower back pain with radiologist notes and follow-up guidance.',
   },
   {
     id: '4',
     title: 'Vaccination Record - COVID-19 Booster',
     date: '21 Feb',
-    fileType: 'book',
+    fileType: 'PDF',
+    category: 'Vaccination',
+    memberName: 'Aarav Malhotra',
+    description: 'Official vaccination record with batch details and booster schedule information.',
   },
 ];
 
@@ -122,6 +139,8 @@ const styles = StyleSheet.create({
 
 export default function HomeScreen(): React.JSX.Element {
   const { user } = useAuth();
+  const router = useRouter();
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
 
   const displayName = useMemo(() => {
     if (user?.name) {
@@ -136,16 +155,16 @@ export default function HomeScreen(): React.JSX.Element {
   }, [user]);
 
   const handleViewAllAppointments = useCallback(() => {
-    // Navigate to appointments screen
-  }, []);
+    router.push('/appointments');
+  }, [router]);
 
   const handleViewAllChats = useCallback(() => {
-    // Navigate to chats screen
-  }, []);
+    router.push('/chat-history');
+  }, [router]);
 
   const handleViewAllDocuments = useCallback(() => {
-    // Navigate to documents screen
-  }, []);
+    router.push('/documents');
+  }, [router]);
 
   return (
     <View className="flex-1 bg-white">
@@ -209,7 +228,7 @@ export default function HomeScreen(): React.JSX.Element {
                   title={chat.title}
                   date={chat.date}
                   time={chat.time}
-                  onPress={() => {}}
+                  onPress={() => router.push('/chat-history')}
                   showBorder={index < RECENT_CHATS.length - 1}
                 />
               ))}
@@ -239,7 +258,7 @@ export default function HomeScreen(): React.JSX.Element {
                   date={document.date}
                   fileType={document.fileType}
                   progress={document.progress}
-                  onPress={() => {}}
+                  onPress={() => setSelectedDocument(document)}
                   showBorder={index < DOCUMENTS.length - 1}
                 />
               ))}
@@ -247,6 +266,19 @@ export default function HomeScreen(): React.JSX.Element {
           </View>
         </View>
       </ScrollView>
+      <DocumentPreviewModal
+        visible={Boolean(selectedDocument)}
+        title={selectedDocument?.title ?? ''}
+        description={selectedDocument?.description ?? ''}
+        category={selectedDocument?.category ?? ''}
+        date={selectedDocument?.date ?? ''}
+        memberName={selectedDocument?.memberName ?? ''}
+        fileType={selectedDocument?.fileType}
+        progress={selectedDocument?.progress}
+        onDownload={() => setSelectedDocument(null)}
+        onShare={() => setSelectedDocument(null)}
+        onClose={() => setSelectedDocument(null)}
+      />
     </View>
   );
 }
